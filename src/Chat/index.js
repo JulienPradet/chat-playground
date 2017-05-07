@@ -9,7 +9,7 @@ export default () => {
 
   const messages$ = Observable.merge(
     Observable.of({ content: 'Bienvenue' }),
-    sentMessage$.do(message => console.log(message))
+    sentMessage$
   )
     .scan((messageList, message) => [...messageList, message], [])
     .startWith([]);

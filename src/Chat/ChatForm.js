@@ -1,32 +1,27 @@
 import dom from '../core/dom';
 import createEventHandler from '../core/createEventHandler';
+import Form from '../Form';
 import Message from './Message.js';
 
 export default sendMessage => {
   const { stream: message$, handler: updateMessage } = createEventHandler();
 
-  const submitForm = event => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    sendMessage({ content: formData.get('message') });
-    updateMessage('');
-  };
-
-  const onChange = event => {
-    updateMessage(event.target.value);
-  };
-
-  return message$.startWith('').flatMap(messaveValue =>
+  return Form(({ setValue, setValueFromEvent }) => values =>
     dom.form(
-      { onsubmit: submitForm },
+      {
+        onsubmit: event => {
+          event.preventDefault();
+          sendMessage({ content: values.message });
+          setValue('message', '');
+        }
+      },
       dom.label({ for: 'message' }, 'Message :'),
       dom.input({
         name: 'message',
         id: 'message',
-        value: messaveValue,
-        onchange: onChange
+        value: values.message,
+        onkeyup: setValueFromEvent
       }),
       dom.button({}, 'Envoyer')
-    )
-  );
+    ));
 };
