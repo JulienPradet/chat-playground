@@ -1,12 +1,12 @@
 import { Observable } from 'rxjs';
 
 export default () => {
-  let observer;
+  let subscribers = [];
   const stream = Observable.create(o => {
-    observer = o;
+    subscribers.push(o);
   });
   return {
     stream: stream,
-    handler: param => observer.next(param)
+    handler: param => subscribers.forEach(observer => observer.next(param))
   };
 };
