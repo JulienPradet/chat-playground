@@ -1,6 +1,6 @@
 import createEventHandler from '../core/createEventHandler';
 
-const FormValuesManager = initialValues => {
+export default (initialValues = {}) => {
   const {
     stream: updateValueIntent$,
     handler: updateValue
@@ -17,7 +17,7 @@ const FormValuesManager = initialValues => {
     .startWith(initialValues);
 
   return {
-    values: formValues$,
+    values$: formValues$,
     handlers: {
       setValueFromEvent: event => {
         const name = event.target.name;
@@ -29,9 +29,4 @@ const FormValuesManager = initialValues => {
       }
     }
   };
-};
-
-export default (view, initialValues = {}) => {
-  const manager = FormValuesManager(initialValues);
-  return manager.values.flatMap(view(manager.handlers));
 };
