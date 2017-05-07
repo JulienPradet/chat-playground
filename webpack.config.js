@@ -1,7 +1,8 @@
-var path = require('path')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  devtool: 'cheap-module-source-map',
   entry: {
     app: path.join(__dirname, 'src/index.js')
   },
@@ -14,14 +15,13 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        loaders: [
-          'style-loader',
-          'css-loader'
-        ]
+        loaders: ['style-loader', 'css-loader']
       }
     ]
   },
-  plugins: [new HtmlWebpackPlugin({
-    template: path.join(__dirname, 'src/index.html')
-  })]
-}
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'src/index.html')
+    })
+  ]
+};
