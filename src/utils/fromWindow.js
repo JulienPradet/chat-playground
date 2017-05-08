@@ -1,13 +1,13 @@
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 export default url => {
   const ref = window.open(url, '_blank');
 
-  const message$ = Observable.create(observer => {
-    window.addEventListener('message', event => {
-      observer.next(event);
-    });
-  }).share();
+  const subject = new Subject();
+
+  window.addEventListener('message', event => {
+    subject.next(event);
+  });
 
   const sendMessage = message => {
     ref.postMessage(
@@ -22,7 +22,7 @@ export default url => {
   };
 
   return {
-    message$,
+    message$: subject,
     sendMessage
   };
 };

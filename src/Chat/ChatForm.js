@@ -12,20 +12,21 @@ export default sendMessage => {
   const messageChanged$ = formValues$
     .map(values => values.message)
     .bufferCount(2, 1)
-    .map((prevMessage, nextMessage) => prevMessage !== nextMessage)
-    .filter(hasChanged => true);
+    .map(([prevMessage, nextMessage]) => prevMessage !== nextMessage)
+    .filter(hasChanged => hasChanged)
+    .share();
 
   const isTyping$ = Observable.merge(
     messageChanged$.mapTo(true),
     messageChanged$.debounceTime(1000).mapTo(false)
   )
-    .distinctUntilChanged()
     .startWith(false);
 
   return Observable.combineLatest(
     isTyping$,
-    formValues$
-  ).flatMap(([isTyping, formValues]) =>
+    formValues$,
+    (isTyping, formValues) => ({ isTyping, formValues })
+  ).flatMap(({ isTyping, formValues }) =>
     dom.form(
       {
         onsubmit: event => {
