@@ -5,18 +5,22 @@ import Form from '../Form';
 import Message from './Message.js';
 
 export default sendMessage => {
-  const { stream: typing$, handler: setTyping } = createEventHandler();
-
-  const isTyping$ = Observable.merge(
-    typing$.mapTo(true),
-    typing$.debounceTime(1000).mapTo(false)
-  )
-    .distinctUntilChanged()
-    .startWith(false);
-
   const { values$: formValues$, handlers: formHandlers } = Form({
     message: ''
   });
+
+  const messageChanged$ = formValues$
+    .map(values => values.message)
+    .bufferCount(2, 1)
+    .map((prevMessage, nextMessage) => prevMessage !== nextMessage)
+    .filter(hasChanged => true);
+
+  const isTyping$ = Observable.merge(
+    messageChanged$.mapTo(true),
+    messageChanged$.debounceTime(1000).mapTo(false)
+  )
+    .distinctUntilChanged()
+    .startWith(false);
 
   return Observable.combineLatest(
     isTyping$,
@@ -35,10 +39,7 @@ export default sendMessage => {
         name: 'message',
         id: 'message',
         value: formValues.message,
-        onkeyup: event => {
-          formHandlers.setValueFromEvent(event);
-          setTyping(true);
-        }
+        onkeyup: formHandlers.setValueFromEvent
       }),
       dom.p({}, isTyping ? 'Typing...' : '...'),
       dom.button({}, 'Envoyer')
