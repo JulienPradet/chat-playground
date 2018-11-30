@@ -20,7 +20,8 @@ export default sendMessage => {
     messageChanged$.mapTo(true),
     messageChanged$.debounceTime(1000).mapTo(false)
   )
-    .startWith(false);
+    .startWith(false)
+    .do(isTyping => console.log(isTyping));
 
   return Observable.combineLatest(
     isTyping$,

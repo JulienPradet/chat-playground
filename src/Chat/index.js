@@ -50,6 +50,8 @@ export default () => {
     .scan((messageList, message) => [...messageList, message], [])
     .startWith([]);
 
+  ChatForm(sendMessage).do(() => console.log('chatForm'));
+
   return dom.div(
     {},
     MessageList(messages$),

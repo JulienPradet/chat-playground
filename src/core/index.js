@@ -1,3 +1,4 @@
+import { Observable, Scheduler } from 'rxjs';
 import createElement from 'virtual-dom/create-element';
 import diff from 'virtual-dom/diff';
 import patch from 'virtual-dom/patch';
@@ -17,7 +18,9 @@ const init = (domTree$, element) => {
       rootNode = patch(rootNode, diff(prevTree, nextTree));
     })
     .subscribe(
-      () => console.debug('DOM updated'),
+      () => {
+        console.log('DOM UPDATED');
+      },
       error => console.error(error),
       () => console.debug('Done.')
     );

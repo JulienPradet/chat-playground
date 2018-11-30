@@ -1,5 +1,14 @@
+import { Observable } from 'rxjs';
 import './index.css';
-import { init } from './core/index.js';
-import Chat from './Chat';
+import { run } from '@cycle/rxjs-run';
+import { makeDOMDriver, DOM, h1 } from '@cycle/dom';
 
-init(Chat(), document.querySelector('#root'));
+function main(sources) {
+  return Chat(sources);
+}
+
+const drivers = {
+  DOM: makeDOMDriver('#root')
+};
+
+run(main, drivers);
